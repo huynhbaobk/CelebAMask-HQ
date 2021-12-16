@@ -35,11 +35,12 @@ def make_dataset(dir):
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
     f = dir.split('/')[-1].split('_')[-1]
+    print(os.listdir(dir))
     print (dir, len([name for name in os.listdir(dir) if os.path.isfile(os.path.join(dir, name))]))
-    for i in range(len([name for name in os.listdir(dir) if os.path.isfile(os.path.join(dir, name))])):
-        img = str(i) + '.jpg'
-        path = os.path.join(dir, img)
-        images.append(path)
+    for name in os.listdir(dir):
+        if os.path.isfile(os.path.join(dir, name)):
+            path = os.path.join(dir, name)
+            images.append(path)
    
     return images
 
@@ -104,8 +105,8 @@ class Tester(object):
             imgs = torch.stack(imgs) 
             imgs = imgs.cuda()
             labels_predict = self.G(imgs)
-            labels_predict_plain = generate_label_plain(labels_predict)
-            labels_predict_color = generate_label(labels_predict)
+            labels_predict_plain = generate_label_plain(labels_predict, self.imsize)
+            labels_predict_color = generate_label(labels_predict, self.imsize)
             for k in range(self.batch_size):
                 cv2.imwrite(os.path.join(self.test_label_path, str(i * self.batch_size + k) +'.png'), labels_predict_plain[k])
                 save_image(labels_predict_color[k], os.path.join(self.test_color_label_path, str(i * self.batch_size + k) +'.png'))
