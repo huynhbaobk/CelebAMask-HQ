@@ -96,7 +96,6 @@ class Tester(object):
         batch_num = int(self.test_size / self.batch_size)
 
         for i in range(batch_num):
-            print (i)
             imgs = []
             for j in range(self.batch_size):
                 path = test_paths[i * self.batch_size + j]
@@ -108,8 +107,11 @@ class Tester(object):
             labels_predict_plain = generate_label_plain(labels_predict, self.imsize)
             labels_predict_color = generate_label(labels_predict, self.imsize)
             for k in range(self.batch_size):
-                cv2.imwrite(os.path.join(self.test_label_path, str(i * self.batch_size + k) +'.png'), labels_predict_plain[k])
-                save_image(labels_predict_color[k], os.path.join(self.test_color_label_path, str(i * self.batch_size + k) +'.png'))
+                label_name = os.path.basename(test_paths[i * self.batch_size + k]).split(".")[0]
+                print (label_name)
+                cv2.imwrite(os.path.join(self.test_label_path, label_name +'.png'), labels_predict_plain[k])
+                save_image(labels_predict_color[k], os.path.join(self.test_color_label_path, label_name +'.png'))
+
 
     def build_model(self):
         self.G = unet().cuda()
